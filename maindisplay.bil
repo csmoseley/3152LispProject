@@ -1,0 +1,65 @@
+;;; Define :maindisplay
+ 
+(in-package :common-graphics-user)
+
+;; The finder-function, which returns the window if it already
+;; exists, and otherwise creates and returns it.
+;; Call this function if you need only one copy of this window,
+;; and that window is a non-owned top-level window.
+(defun maindisplay () (find-or-make-application-window :maindisplay 'make-maindisplay))
+ 
+;; The maker-function, which always creates a new window.
+;; Call this function if you need more than one copy,
+;; or the single copy should have a parent or owner window.
+;; (Pass :owner to this function; :parent is for compatibility.)
+(defun make-maindisplay
+    (&key parent (owner (or parent (screen *system*))) exterior
+     (interior (make-box 270 127 636 603)) (name :maindisplay) (title "explorex")
+     (border :frame) (child-p t) form-p)
+  (let ((owner
+         (make-window name :owner owner
+           :class 'bitmap-window
+           :child-p child-p
+           :exterior exterior
+           :interior interior
+           :border border
+           :close-button t
+           :font (make-font-ex :swiss "Arial / ANSI" 12)
+           :form-state :normal
+           :maximize-button nil
+           :minimize-button t
+           :name :maindisplay
+           :pop-up nil
+           :resizable t
+           :scrollbars nil
+           :state :normal
+           :system-menu t
+           :title title
+           :title-bar t
+           :dialog-items (make-maindisplay-widgets)
+           :form-p form-p
+           :form-package-name nil)))
+    owner))
+
+(defun make-maindisplay-widgets ()
+  (list (make-instance 'button :available nil :font
+                       (make-font-ex nil "Segoe UI / Default" 12) :left 14 :name :button5
+                       :on-click 'maindisplay-button5-on-click-1 :title "Left" :top 343)
+        (make-instance 'button :available nil :font
+                       (make-font-ex nil "Segoe UI / Default" 12) :left 106 :name
+                       :button6 :on-click 'maindisplay-button6-on-click :title "Up" :top
+                       312)
+        (make-instance 'button :available nil :font
+                       (make-font-ex nil "Segoe UI / Default" 12) :left 198 :name
+                       :button7 :on-click 'maindisplay-button7-on-click :title "Right"
+                       :top 343)
+        (make-instance 'button :available nil :font
+                       (make-font-ex nil "Segoe UI / Default" 12) :left 106 :name
+                       :button8 :on-click 'maindisplay-button8-on-click :title "Down"
+                       :top 343)
+        (make-instance 'multi-line-lisp-text :font (make-font-ex nil "Courier New" 13)
+                       :foreground-color black :height 266 :left 9 :name :gameoutput
+                       :read-only t :top 43 :width 342)
+        (make-instance 'button :font (make-font-ex nil "Segoe UI / Default" 12) :left 9
+                       :name :button9 :on-click 'maindisplay-button9-on-click :title
+                       "New Game" :top 11)))
